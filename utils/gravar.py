@@ -1,6 +1,7 @@
 import pyaudio
 import wave
 import time
+from pathlib import Path
 
 def gravar(tempo: int, arquivo: str):
     """ Função que realiza gravação de $(tempo) segundos, salvando em arquivo $(nome).wav """
@@ -31,6 +32,7 @@ def gravar(tempo: int, arquivo: str):
     stream.close()
     p.terminate()
 
+    Path('./output').mkdir(exist_ok=True)
     wf = wave.open(f'output/{arquivo}' + '.wav', 'wb')
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))

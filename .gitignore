@@ -1,2 +1,5 @@
 # Arquivos de output Ignorados:
 output/*.wav
+
+# Ignorar Ambiente virtual
+venv
