@@ -40,16 +40,16 @@ class Mapa:
                 if j == 0 or j == largura - 1:
                     self.tiles[j, i] = 1
 
-
-class Jogo:
+class Jogo(tk.Tk):
     JOGADOR = 2
-    def __init__(self, shape, player_pos):
-        self.jogador = Jogador(player_pos)
-        self.map = Mapa(shape)
+    DFT_SHAPE = (20, 20)
+    DFT_PLAYER_POS = (1, 1)
+    def __init__(self, shape=None, player_pos=None):
+        self.jogador = Jogador(player_pos or self.DFT_PLAYER_POS)
+        self.map = Mapa(shape or self.DFT_SHAPE)
 
         self.posicionar_jogador()
         self.main_loop()
-
 
     def posicionar_jogador(self):
         i, j = self.jogador.get_posicao()
