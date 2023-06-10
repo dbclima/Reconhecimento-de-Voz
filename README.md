@@ -1,6 +1,12 @@
 # Reconhecimento-de-Voz
 Repositório para o trabalho de reconhecimento de voz
 
+## Set Up
+É necessária a instalação de algumas bibliotecas, utilizando:
+```
+pip install -r requirements.txt
+```
+
 ## Utils
 Arquivos que contém funcionalidades que podem ser aproveitadas no projeto da disciplina
 
