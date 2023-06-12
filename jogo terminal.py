@@ -40,7 +40,7 @@ class Mapa:
                 if j == 0 or j == largura - 1:
                     self.tiles[j, i] = 1
 
-class Jogo(tk.Tk):
+class Jogo:
     JOGADOR = 2
     DFT_SHAPE = (20, 20)
     DFT_PLAYER_POS = (1, 1)
