@@ -31,22 +31,27 @@ class Jogo(tk.Canvas):
 
     def carregar_imagens(self):
         path_pedras = [Path(pedra) for pedra in Path('./assets/rock').iterdir()]
+        path_pedras.sort()
         imagens_pedras = [Image.open(pedra).resize((16 * self.SCALE, 16 * self.SCALE), resample=Image.NEAREST) for pedra in path_pedras]
         self.pedra_imgs = [ImageTk.PhotoImage(pedra) for pedra in imagens_pedras]
 
         path_gramas = [Path(grama) for grama in Path('./assets/grass').iterdir()]
+        path_gramas.sort()
         imagens_gramas = [Image.open(grama).resize((16 * self.SCALE, 16 * self.SCALE), resample=Image.NEAREST) for grama in path_gramas]
         self.grama_imgs = [ImageTk.PhotoImage(grama) for grama in imagens_gramas]
         
         path_timer = [Path(timer) for timer in Path('./assets/timer').iterdir()]
+        path_timer.sort()
         imagens_timer = [Image.open(timer).resize((16 * self.SCALE, 16 * self.SCALE), resample=Image.NEAREST) for timer in path_timer]
         self.timer_imgs = [ImageTk.PhotoImage(timer) for timer in imagens_timer]
 
         path_moedas = [Path(moeda) for moeda in Path('./assets/coin').iterdir()]
+        path_moedas.sort()
         imagens_moedas = [Image.open(moeda).resize((16 * self.SCALE, 23 * self.SCALE), resample=Image.NEAREST) for moeda in path_moedas]
         self.moeda_imgs = [ImageTk.PhotoImage(moeda) for moeda in imagens_moedas]
 
         path_player = [Path(player) for player in Path('./assets/player').iterdir()]
+        path_player.sort()
         imagens_player = [Image.open(player).resize((16 * self.SCALE, 23 * self.SCALE), resample=Image.NEAREST) for player in path_player]
         player_imgs_d = [ImageTk.PhotoImage(player) for player in imagens_player]
         player_imgs_e = [ImageTk.PhotoImage(player.transpose(Image.FLIP_LEFT_RIGHT)) for player in imagens_player]
@@ -171,7 +176,7 @@ if __name__ == '__main__':
     app = tk.Tk()
     app.title('Processamento de Voz - 23.1')
 
-    jogo = Jogo(shape=(31,15))
+    jogo = Jogo(shape=(25,11))
     jogo.pack(expand=True)
 
     app.mainloop()
