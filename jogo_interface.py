@@ -10,8 +10,8 @@ class Jogo(tk.Canvas):
     SCALE = 3
     TEMPO_ACOES = 800
     def __init__(self, shape=None, player_pos=None):
-        largura, altura = shape or (20, 20)
-        super().__init__(width=largura * 16 * self.SCALE, height=altura * 16 * self.SCALE, background='black', highlightthickness=0)
+        self.largura, self.altura = shape or (21, 15)
+        super().__init__(width=self.largura * 16 * self.SCALE, height=self.altura * 16 * self.SCALE, background='black', highlightthickness=0)
 
         self.fim = False
 
@@ -22,7 +22,7 @@ class Jogo(tk.Canvas):
         self.player = Jogador(player_pos)
         self.player_state = 0
 
-        self.timer_pos = (largura - 2, 1)
+        self.timer_pos = (self.largura - 2, 1)
         self.timer_state = 0
 
         self.carregar_imagens()
@@ -73,7 +73,7 @@ class Jogo(tk.Canvas):
         self.create_image(*self.display_point(x, y), image=self.player_imgs[self.player.direcao][-1], tag='player', anchor='sw')
 
     def criar_objetos_dinamicos(self):
-        self.moeda.set_posicao((3, 3))
+        self.moeda.set_posicao((self.largura - 2, self.altura - 2))
         x, y = self.moeda.get_posicao()
         self.create_image(*self.display_point(x, y), image=self.moeda_imgs[self.moeda_state], tag='moeda', anchor='sw')
         self.atualizar_moeda()
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     app = tk.Tk()
     app.title('Processamento de Voz - 23.1')
 
-    jogo = Jogo(shape=(25,11))
+    jogo = Jogo(shape=(21, 15))
     jogo.pack(expand=True)
 
     app.mainloop()

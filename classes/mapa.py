@@ -1,25 +1,16 @@
 import numpy as np
+from classes.labirinto import Labirinto
 
 class Mapa:
-    DEFAULT = (20, 20)
+    DFT_SHAPE = (21, 15)
     def __init__(self, shape=None):
-            
-        self.tiles = np.zeros((shape or self.DEFAULT), dtype=np.uint8)
+        self.shape = shape or self.DFT_SHAPE
+        self.tiles = None
 
         self.criar_paredes()
 
     def criar_paredes(self):
-        altura, largura = self.tiles.shape
-        for i, row in enumerate(self.tiles):
-            for j in range(len(row)):
-                if i == 0 or i == altura - 1:
-                    self.tiles[i, j] = 1
-
-                if j == 0 or j == largura - 1:
-                    self.tiles[i, j] = 1
-
-                # if (i + j) % 2 == 1:
-                #     self.tiles[i, j] = 1
+        self.tiles = Labirinto(self.shape).export_array()
 
     def is_vazio(self, pos) -> bool:
         x, y = pos
