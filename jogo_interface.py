@@ -7,22 +7,25 @@ import random
 from classes import Jogador, Mapa, Moeda
 
 class Jogo(tk.Canvas):
-    SCALE = 4
+    SCALE = 3
     TEMPO_ACOES = 800
     def __init__(self, shape=None, player_pos=None):
         largura, altura = shape or (20, 20)
         super().__init__(width=largura * 16 * self.SCALE, height=altura * 16 * self.SCALE, background='black', highlightthickness=0)
 
         self.map = Mapa(shape)
+        self.moeda = Moeda()
+        self.moeda_state = 0
+
         self.player = Jogador(player_pos)
         self.player_state = 0
 
         self.timer_pos = (largura - 2, 1)
         self.timer_state = 0
-        self.ref_timer = None
 
         self.carregar_imagens()
-        self.criar_objetos()
+        self.criar_objetos_estaticos()
+        self.criar_objetos_dinamicos()
 
         self.bind_all('<Key>', self.comando_wrapper)
 
@@ -39,13 +42,17 @@ class Jogo(tk.Canvas):
         imagens_timer = [Image.open(timer).resize((16 * self.SCALE, 16 * self.SCALE), resample=Image.NEAREST) for timer in path_timer]
         self.timer_imgs = [ImageTk.PhotoImage(timer) for timer in imagens_timer]
 
+        path_moedas = [Path(moeda) for moeda in Path('./assets/coin').iterdir()]
+        imagens_moedas = [Image.open(moeda).resize((16 * self.SCALE, 23 * self.SCALE), resample=Image.NEAREST) for moeda in path_moedas]
+        self.moeda_imgs = [ImageTk.PhotoImage(moeda) for moeda in imagens_moedas]
+
         path_player = [Path(player) for player in Path('./assets/player').iterdir()]
         imagens_player = [Image.open(player).resize((16 * self.SCALE, 23 * self.SCALE), resample=Image.NEAREST) for player in path_player]
         player_imgs_d = [ImageTk.PhotoImage(player) for player in imagens_player]
         player_imgs_e = [ImageTk.PhotoImage(player.transpose(Image.FLIP_LEFT_RIGHT)) for player in imagens_player]
         self.player_imgs = [player_imgs_e, player_imgs_d]
 
-    def criar_objetos(self):
+    def criar_objetos_estaticos(self):
         for i, row in enumerate(self.map.tiles):
             for j, element in enumerate(row):
                 if element == 0:
@@ -57,6 +64,12 @@ class Jogo(tk.Canvas):
 
         x, y = self.player.get_posicao()
         self.create_image(*self.display_point(x, y), image=self.player_imgs[self.player.direcao][-1], tag='player', anchor='sw')
+
+    def criar_objetos_dinamicos(self):
+        self.moeda.set_posicao((3, 3))
+        x, y = self.moeda.get_posicao()
+        self.create_image(*self.display_point(x, y), image=self.moeda_imgs[self.moeda_state], tag='moeda', anchor='sw')
+        self.atualizar_moeda()
 
     def comando_wrapper(self, event: tk.Event):
         self.unbind_all('<Key>')
@@ -80,6 +93,7 @@ class Jogo(tk.Canvas):
             x_intermediario -= 1
             self.player.direcao = False
         else:
+            self.finalizar_comando()
             return None
 
         posicao = (x, y)
@@ -134,6 +148,20 @@ class Jogo(tk.Canvas):
             self.after(self.TEMPO_ACOES // (len(self.player_imgs[self.player.direcao]) * 2), lambda: self.atualizar_player(origem))
 
         return None
+    
+    def atualizar_moeda(self):
+        self.delete(self.find_withtag('moeda'))
+
+        x, y = self.moeda.get_posicao()
+
+        self.create_image(*self.display_point(x, y), image=self.moeda_imgs[self.moeda_state], tag='moeda', anchor='sw')
+        self.moeda_state += 1
+
+        if self.moeda_state == len(self.moeda_imgs):
+            self.moeda_state = 0
+
+        self.after(self.TEMPO_ACOES // len(self.moeda_imgs), self.atualizar_moeda)
+
 
     def display_point(self, x, y):
         return (x) * 16 * self.SCALE, (y + 1) * 16 * self.SCALE
