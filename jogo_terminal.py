@@ -63,8 +63,8 @@ class Jogo:
             sys.exit()
 
         movimentos = {
-                'e': 1,
-                'd': -1,
+                'e': -1,
+                'd': 1,
                 'c': -1j,
                 'b': +1j}
 

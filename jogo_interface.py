@@ -13,6 +13,8 @@ class Jogo(tk.Canvas):
         largura, altura = shape or (20, 20)
         super().__init__(width=largura * 16 * self.SCALE, height=altura * 16 * self.SCALE, background='black', highlightthickness=0)
 
+        self.fim = False
+
         self.map = Mapa(shape)
         self.moeda = Moeda()
         self.moeda_state = 0
@@ -112,7 +114,8 @@ class Jogo(tk.Canvas):
         self.finalizar_comando()
 
     def finalizar_comando(self) -> None:
-        self.after(self.TEMPO_ACOES, lambda: self.bind_all('<Key>', self.comando_wrapper))
+        if not self.condicao_vitoria():
+            self.after(self.TEMPO_ACOES, lambda: self.bind_all('<Key>', self.comando_wrapper))
 
     def atualizar_timer(self) -> None:
         x, y = self.timer_pos
@@ -156,6 +159,9 @@ class Jogo(tk.Canvas):
     
     def atualizar_moeda(self):
         self.delete(self.find_withtag('moeda'))
+        
+        if self.fim:
+            return None
 
         x, y = self.moeda.get_posicao()
 
@@ -170,6 +176,13 @@ class Jogo(tk.Canvas):
 
     def display_point(self, x, y):
         return (x) * 16 * self.SCALE, (y + 1) * 16 * self.SCALE
+
+    
+    def condicao_vitoria(self) -> bool:
+        if self.player.get_posicao() == self.moeda.get_posicao():
+            self.fim = True
+            return True
+        return False
 
 
 if __name__ == '__main__':
