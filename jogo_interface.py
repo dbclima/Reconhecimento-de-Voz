@@ -83,8 +83,8 @@ class Jogo(tk.Canvas):
 
     def carregar_comando_voz(self):
         comando = self.microfone.get_comando()
-        print(comando)
         if comando != None:
+            print('Último comando válido:', comando)
             self.unbind_all('<Key>')
             self.comando(comando)
         self.after(self.TEMPO_ACOES//2, self.carregar_comando_voz)
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     app = tk.Tk()
     app.title('Processamento de Voz - 23.1')
 
-    jogo = Jogo(shape=(21, 15))
+    jogo = Jogo(shape=(21, 13))
     jogo.pack(expand=True)
 
     app.mainloop()
