@@ -4,11 +4,11 @@ from PIL import Image, ImageTk
 from pathlib import Path
 import random
 
-from classes import Jogador, Mapa, Moeda
+from classes import Jogador, Mapa, Moeda, Microfone
 
 class Jogo(tk.Canvas):
     SCALE = 3
-    TEMPO_ACOES = 800
+    TEMPO_ACOES = 700
     def __init__(self, shape=None, player_pos=None):
         self.largura, self.altura = shape or (21, 15)
         super().__init__(width=self.largura * 16 * self.SCALE, height=self.altura * 16 * self.SCALE, background='black', highlightthickness=0)
@@ -22,6 +22,8 @@ class Jogo(tk.Canvas):
         self.player = Jogador(player_pos)
         self.player_state = 0
 
+        self.microfone = Microfone()
+
         self.timer_pos = (self.largura - 2, 1)
         self.timer_state = 0
 
@@ -30,6 +32,7 @@ class Jogo(tk.Canvas):
         self.criar_objetos_dinamicos()
 
         self.bind_all('<Key>', self.comando_wrapper)
+        self.after(self.TEMPO_ACOES, self.carregar_comando_voz)
 
     def carregar_imagens(self):
         path_pedras = [Path(pedra) for pedra in Path('./assets/rock').iterdir()]
@@ -77,6 +80,14 @@ class Jogo(tk.Canvas):
         x, y = self.moeda.get_posicao()
         self.create_image(*self.display_point(x, y), image=self.moeda_imgs[self.moeda_state], tag='moeda', anchor='sw')
         self.atualizar_moeda()
+
+    def carregar_comando_voz(self):
+        comando = self.microfone.get_comando()
+        print(comando)
+        if comando != None:
+            self.unbind_all('<Key>')
+            self.comando(comando)
+        self.after(self.TEMPO_ACOES//2, self.carregar_comando_voz)
 
     def comando_wrapper(self, event: tk.Event):
         self.unbind_all('<Key>')
@@ -181,6 +192,7 @@ class Jogo(tk.Canvas):
     def condicao_vitoria(self) -> bool:
         if self.player.get_posicao() == self.moeda.get_posicao():
             self.fim = True
+            self.microfone.desligar()
             return True
         return False
 
