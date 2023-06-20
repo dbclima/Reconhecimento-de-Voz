@@ -9,7 +9,6 @@ import librosa
 import librosa.display
 import sys
 
-
 class Buffer:
     MAX_SIZE = 100  # Aproximadamente 2.5s para preencher
     def __init__(self, size=None):
@@ -42,6 +41,11 @@ class Buffer:
     
     def get_array_elementos(self):
         return self.get_elementos().flatten()
+    
+    def calibrar(self, buffer_ruido):
+        array_ruido = buffer_ruido.get_array_elementos()
+        maximo_ruido = np.amax(array_ruido) * 1.1
+        self.elementos = [elemento for elemento in self.elementos if elemento > maximo_ruido]
 
 
 class Microfone:
@@ -75,11 +79,11 @@ class Microfone:
         loop_thread_escuta = Thread(target=self._thread_escuta, daemon=True)
         loop_thread_escuta.start()
 
+        self.detectar_ruido()
+
         self.treino()
         self.dict_treino_mfcc = {key: librosa.feature.mfcc(y=buffer.get_array_elementos().astype(np.float32), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False) for key, buffer in self.dict_treino.items()}
         
-        self.detectar_ruido()
-
         loop_thread_buffer = Thread(target=self._thread_preencher_buffer, daemon=True)
         loop_thread_buffer.start()
 
@@ -111,6 +115,7 @@ class Microfone:
             buffer = self.dict_treino[key]
             print(f'Diga {key}:')
             self.preencher_buffer(buffer)
+            buffer.calibrar()
             np.save(f'Treino/{key}_treino', buffer.get_array_elementos())
 
     def dtw_compare(self, buffer: Buffer):
@@ -134,7 +139,8 @@ class Microfone:
         print('Fim detecção de ruido')
         array = self.buffer_ruido.get_array_elementos()
         print('Dados Ruído:')
-        print(np.amax(array), np.amin(array), np.mean(array))
+        plt.plot(self.buffer_ruido.get_array_elementos())
+        plt.show()
 
 
 if __name__ == '__main__':
