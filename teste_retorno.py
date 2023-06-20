@@ -28,7 +28,7 @@ while True:
     print(np.array(struct.unpack('<1024h', in_data)).shape)
     streamOut.write(in_data)
 
-in_data = np.load(r'Treino\Baixo_treino.npy')
+in_data = np.load(r'Treino\Direita_treino.npy')
 print(in_data, in_data.shape)
 
 for i in range(100):
