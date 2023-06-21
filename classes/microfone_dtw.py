@@ -45,7 +45,7 @@ class Buffer:
     
     def calibrar(self, buffer_ruido):
         array_ruido = buffer_ruido.get_array_elementos()
-        maximo_ruido = np.divide(np.sum(np.square(array_ruido)), len(buffer_ruido.get_elementos()))
+        maximo_ruido = np.divide(np.sum(np.square(array_ruido)), len(buffer_ruido.get_elementos())) * 1.1
         self.elementos_vozeados = [elemento for elemento in self.elementos if np.sum(np.square(elemento)) > maximo_ruido]
         print(len(self.elementos) ,len(self.elementos_vozeados))
 
@@ -59,7 +59,7 @@ class Microfone:
     RATE = 44100
     CHUNK = 1024
     TREINO_SIZE = 50
-    RUIDO_SIZE = 100
+    RUIDO_SIZE = 50
     CAPTURA_SIZE = 75
 
     def __init__(self):
@@ -120,18 +120,19 @@ class Microfone:
             print(f'Diga {key}:')
             self.preencher_buffer(buffer)
             buffer.calibrar(self.buffer_ruido)
-            np.save(f'Treino/{key}_treino', buffer.get_elementos_vozeados())
+            # np.save(f'Treino/{key}_treino', buffer.get_elementos_vozeados())
 
         self.dict_treino_mfcc = {key: librosa.feature.mfcc(y=buffer.get_elementos_vozeados().flatten(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False) for key, buffer in self.dict_treino.items()}
         
-        mfccs_ruido = librosa.feature.mfcc(y=buffer.get_array_elementos(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
+        mfccs_ruido = librosa.feature.mfcc(y=self.buffer_ruido.get_array_elementos(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
         lista_limiares = list()
         for key, mfccs_treino in self.dict_treino_mfcc.items():
             D, wp = librosa.sequence.dtw(mfccs_treino, mfccs_ruido)
             print(np.sum(D[wp[:, 0], wp[:, 1]]))
             lista_limiares.append(np.sum(D[wp[:, 0], wp[:, 1]]))
         
-        self.limiar = np.mean(lista_limiares) * 1.5
+        self.limiar = np.mean(lista_limiares)
+        print(self.limiar)
 
     def dtw_compare(self, buffer: Buffer):
         buffer_in = buffer.get_array_elementos()
@@ -140,9 +141,9 @@ class Microfone:
         for key, mfccs_treino in self.dict_treino_mfcc.items():
             D, wp = librosa.sequence.dtw(mfccs_treino, mfccs_teste)
             custo = np.sum(D[wp[:, 0], wp[:, 1]])
-            if custo <= 550_000 and buffer.full:
-                lista_custos.append((key, custo))
-                np.save(f'Teste/teste_{key}', buffer.get_array_elementos())
+            if custo <= self.limiar and buffer.full:
+                lista_custos.append((custo, key))
+                # np.save(f'Teste/teste_{key}', buffer.get_array_elementos())
         if lista_custos:
             self.fila_saida.put(lista_custos)
             buffer.clear()
@@ -151,14 +152,13 @@ class Microfone:
         print('-x-x-x-x-x-x-x-Detectando Ruido-x-x-x-x-x-x-x-')
         self.preencher_buffer(self.buffer_ruido)
         print('-x-x-x-x-x-x-Fim Detecção de Ruido-x-x-x-x-x-x-')
-        array = self.buffer_ruido.get_array_elementos()
         # plt.plot(self.buffer_ruido.get_array_elementos())
         # plt.show()
 
     def get_comando(self):
         comandos = self.fila_saida.get()
-        for comando, custo in comandos:
-            return 
+        custo, comando = min(comandos)
+        return comando
 
 
 if __name__ == '__main__':
