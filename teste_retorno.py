@@ -2,7 +2,7 @@ import pyaudio
 import numpy as np
 import struct
 
-FORMATIN = pyaudio.paInt16
+FORMATIN = pyaudio.paFloat32
 FORMATOUT = FORMATIN
 CHANNELS = 1
 RATE = 44100
@@ -25,13 +25,13 @@ while True:
     break
 
     in_data = streamIn.read(CHUNK)
-    print(np.array(struct.unpack('<1024h', in_data)).shape)
+    print(np.array(struct.unpack('<1024f', in_data)).shape)
     streamOut.write(in_data)
 
-in_data = np.load(r'Treino\Direita_treino.npy')
+in_data = np.load(r'Treino\Cima_treino.npy').flatten()
 print(in_data, in_data.shape)
 
 for i in range(100):
     data = in_data[i*1024: (i+1)*1024]
-    data = struct.pack('<1024h', *data)
+    data = struct.pack('<1024f', *data)
     streamOut.write(data)
