@@ -68,6 +68,7 @@ class Microfone:
         self.buffer_teste = Buffer(self.CAPTURA_SIZE)
         self.buffer_ruido = Buffer(self.RUIDO_SIZE)
         self.limiar = None
+        self.lista_limiares = list()
 
         self.treino_keys = ['Direita', 'Esquerda', 'Cima', 'Baixo']
         self.dict_treino: dict[str, Buffer] = {key: Buffer(self.TREINO_SIZE) for key in self.treino_keys}
@@ -133,6 +134,21 @@ class Microfone:
         
         self.limiar = np.mean(lista_limiares)
         print(self.limiar)
+        
+    def adicionar_palavra(self, palavra: str) -> None:
+        if not palavra:
+            return None
+        
+        self.dict_treino[palavra] = Buffer(self.TREINO_SIZE)
+        buffer = self.dict_treino[palavra]
+
+        self.preencher_buffer(buffer)
+        buffer.calibrar(self.buffer_ruido)
+
+        self.dict_treino_mfcc[palavra] = librosa.feature.mfcc(y=buffer.get_elementos_vozeados().flatten(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
+        D, wp = librosa.sequence.dtw(self.dict_treino_mfcc[palavra], self.mfccs_ruido)
+        self.lista_limiares.append(np.sum(D[wp[:, 0], wp[:, 1]]))
+
 
     def dtw_compare(self, buffer: Buffer):
         buffer_in = buffer.get_array_elementos()
@@ -141,7 +157,7 @@ class Microfone:
         for key, mfccs_treino in self.dict_treino_mfcc.items():
             D, wp = librosa.sequence.dtw(mfccs_treino, mfccs_teste)
             custo = np.sum(D[wp[:, 0], wp[:, 1]])
-            if custo <= self.limiar and buffer.full:
+            if custo <= np.mean(self.lista_limiares) and buffer.full:
                 lista_custos.append((custo, key))
                 # np.save(f'Teste/teste_{key}', buffer.get_array_elementos())
         if lista_custos:
@@ -152,8 +168,7 @@ class Microfone:
         print('-x-x-x-x-x-x-x-Detectando Ruido-x-x-x-x-x-x-x-')
         self.preencher_buffer(self.buffer_ruido)
         print('-x-x-x-x-x-x-Fim Detecção de Ruido-x-x-x-x-x-x-')
-        # plt.plot(self.buffer_ruido.get_array_elementos())
-        # plt.show()
+        self.mfccs_ruido = librosa.feature.mfcc(y=self.buffer_ruido.get_array_elementos(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
 
     def get_comando(self):
         comandos = self.fila_saida.get()
