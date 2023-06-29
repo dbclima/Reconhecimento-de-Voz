@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import librosa
 import librosa.display
 import sys
+import time
 
 class Buffer:
     MAX_SIZE = 100  # Aproximadamente 2.5s para preencher
@@ -87,11 +88,6 @@ class Microfone:
 
         self.detectar_ruido()
 
-        self.treino()
-        
-        loop_thread_buffer = Thread(target=self._thread_preencher_buffer, daemon=True)
-        loop_thread_buffer.start()
-
     def _thread_escuta(self):
         while True:
             if not self.stream.is_active():
@@ -138,12 +134,17 @@ class Microfone:
     def adicionar_palavra(self, palavra: str) -> None:
         if not palavra:
             return None
-        
-        self.dict_treino[palavra] = Buffer(self.TREINO_SIZE)
-        buffer = self.dict_treino[palavra]
 
+        buffer = Buffer(self.TREINO_SIZE)
+
+        print(f'Diga {palavra}')
         self.preencher_buffer(buffer)
         buffer.calibrar(self.buffer_ruido)
+
+        print(buffer.get_elementos_vozeados())
+        np.save(f'Teste/{palavra}', buffer.get_elementos_vozeados())
+
+        self.dict_treino[palavra] = buffer
 
         self.dict_treino_mfcc[palavra] = librosa.feature.mfcc(y=buffer.get_elementos_vozeados().flatten(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
         D, wp = librosa.sequence.dtw(self.dict_treino_mfcc[palavra], self.mfccs_ruido)
@@ -174,9 +175,18 @@ class Microfone:
         comandos = self.fila_saida.get()
         custo, comando = min(comandos)
         return comando
+    
+    def comecar_coleta_dados(self):
+        loop_thread_buffer = Thread(target=self._thread_preencher_buffer, daemon=True)
+        loop_thread_buffer.start()
 
 
 if __name__ == '__main__':
-    Mic = Microfone()
+    mic = Microfone()
+
+    palavras = ['Direita', 'Esquerda', 'Cima', 'Baixo']
+    for palavra in palavras:
+        mic.adicionar_palavra(palavra)
+
     while True:
-        print(Mic.fila_saida.get())
+        print(mic.fila_saida.get())

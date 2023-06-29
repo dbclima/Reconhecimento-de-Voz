@@ -18,7 +18,6 @@ streamIn = audio.open(format=FORMATIN, channels=CHANNELS,
 streamOut = audio.open(format=FORMATOUT, channels=CHANNELS,
                        rate=RATE, output=True, input_device_index=0,
                        frames_per_buffer=CHUNK)
-print("recording...")
 
 
 while True:
@@ -28,7 +27,7 @@ while True:
     print(np.array(struct.unpack('<1024f', in_data)).shape)
     streamOut.write(in_data)
 
-in_data = np.load(r'Treino\Baixo_treino.npy').flatten()
+in_data = np.load(r'Teste\Baixo.npy').flatten()
 print(in_data, in_data.shape)
 
 for i in range(100):

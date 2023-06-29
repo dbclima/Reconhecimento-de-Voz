@@ -9,9 +9,9 @@ from classes import Jogador, Mapa, Moeda, Microfone
 class Jogo(tk.Canvas):
     SCALE = 3
     TEMPO_ACOES = 700
-    def __init__(self, shape=None, player_pos=None):
+    def __init__(self, container, shape=None, player_pos=None):
         self.largura, self.altura = shape or (21, 15)
-        super().__init__(width=self.largura * 16 * self.SCALE, height=self.altura * 16 * self.SCALE, background='black', highlightthickness=0)
+        super().__init__(container, width=self.largura * 16 * self.SCALE, height=self.altura * 16 * self.SCALE, background='black', highlightthickness=0)
 
         self.fim = False
 
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     app = tk.Tk()
     app.title('Processamento de Voz - 23.1')
 
-    jogo = Jogo(shape=(21, 13))
+    jogo = Jogo(app, shape=(21, 13))
     jogo.pack(expand=True)
 
     app.mainloop()
