@@ -138,6 +138,7 @@ class Microfone:
         buffer = Buffer(self.TREINO_SIZE)
 
         print(f'Diga {palavra}')
+        buffer.clear()
         self.preencher_buffer(buffer)
         buffer.calibrar(self.buffer_ruido)
 
