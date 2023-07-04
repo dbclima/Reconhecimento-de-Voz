@@ -43,6 +43,7 @@ class Labirinto:
         self.criar_grid()
 
         self.pilha = list()
+        self.extremidades = list()
 
         self.celula_atual: Celula = self.grid[0][0]
 
@@ -85,6 +86,10 @@ class Labirinto:
             vizinhos.append(direita)
         if esquerda and not esquerda.visitado:
             vizinhos.append(esquerda)
+
+        if (not vizinhos) and (not celula.visitado):
+                self.extremidades.append(celula.pos)
+
         return random.choice(vizinhos) if vizinhos else False
     
     def remover_paredes(self, celula_atual: Celula, celula_prox: Celula) -> None:
@@ -107,11 +112,10 @@ class Labirinto:
     
     def gerar_caminhos(self):
         while True:
-            self.celula_atual.visitado = True
-
             celula_prox = self.verificar_vizinhos(self.celula_atual)
+            self.celula_atual.visitado = True
             if celula_prox:
-                celula_prox.visitado = True
+                # celula_prox.visitado = True
                 self.pilha.append(self.celula_atual)
                 self.remover_paredes(self.celula_atual, celula_prox)
                 self.celula_atual = celula_prox

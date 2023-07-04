@@ -13,7 +13,7 @@ audio = pyaudio.PyAudio()
 
 # start Recording
 streamIn = audio.open(format=FORMATIN, channels=CHANNELS,
-                      rate=RATE, input=True, input_device_index=0,
+                      rate=RATE, input=True, input_device_index=1,
                       frames_per_buffer=CHUNK)
 streamOut = audio.open(format=FORMATOUT, channels=CHANNELS,
                        rate=RATE, output=True, input_device_index=0,
@@ -21,10 +21,10 @@ streamOut = audio.open(format=FORMATOUT, channels=CHANNELS,
 
 
 while True:
-    break
+    # break
 
     in_data = streamIn.read(CHUNK)
-    print(np.array(struct.unpack('<1024f', in_data)).shape)
+    # print(np.array(struct.unpack('<1024f', in_data)).shape)
     streamOut.write(in_data)
 
 in_data = np.load(r'Teste\Baixo.npy').flatten()

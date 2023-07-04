@@ -33,10 +33,11 @@ class Menu(tk.Tk):
         self.canvas = tk.Canvas(self, width=self.LARGURA, height=self.ALTURA, highlightthickness=0)
         self.carregar_imagens()
         self.criar_objetos()
+        self.atribuir_funcionalidades()
         
         self.canvas.pack()
 
-    def carregar_imagens(self):
+    def carregar_imagens(self) -> None:
         path_bkg = Path('./assets/menu/background.png')
         imagem_bkg = Image.open(path_bkg).resize((80 * self.SCALE, 128 * self.SCALE), resample=Image.NEAREST)
         self.bkg_img = ImageTk.PhotoImage(imagem_bkg)
@@ -53,14 +54,35 @@ class Menu(tk.Tk):
         imagem_botao_medio = Image.open(path_botao_medio).resize((23 * self.SCALE, 20 * self.SCALE), resample=Image.NEAREST)
         self.botao_medio = ImageTk.PhotoImage(imagem_botao_medio)
 
-    def criar_objetos(self):
+        path_botao_dificil = Path('./assets/menu/botao_dificil.png')
+        imagem_botao_dificil = Image.open(path_botao_dificil).resize((21 * self.SCALE, 28 * self.SCALE), resample=Image.NEAREST)
+        self.botao_dificil = ImageTk.PhotoImage(imagem_botao_dificil)
+
+    def criar_objetos(self) -> None:
         self.canvas.create_image((0, 0), image=self.bkg_img, tag='bkg', anchor='nw')
         self.canvas.create_image((self.LARGURA // 2, self.ALTURA // 3.2), image=self.botao_treino, tag='treino')
         self.canvas.create_image((self.LARGURA // 3, self.ALTURA // 1.9), image=self.botao_facil, tag='facil')
-        self.canvas.create_image((self.LARGURA // 3 * 2, self.ALTURA // 1.3), image=self.botao_medio, tag='medio')
+        self.canvas.create_image((self.LARGURA * 0.62, self.ALTURA // 1.35), image=self.botao_medio, tag='medio', anchor='sw')
+        self.canvas.create_image((self.LARGURA * 0.16, self.ALTURA // 1.1), image=self.botao_dificil, tag='dificil', anchor='sw')
 
+    def atribuir_funcionalidades(self) -> None:
+        self.canvas.tag_bind('treino', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Fácil'))
+        self.canvas.tag_bind('facil', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Fácil'))
+        self.canvas.tag_bind('medio', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Médio'))
+        self.canvas.tag_bind('dificil', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Difícil'))
 
-        
+        self.canvas.tag_bind('treino', '<Enter>', lambda _: self.canvas.config(cursor='hand2'))
+        self.canvas.tag_bind('treino', '<Leave>', lambda _: self.canvas.config(cursor='arrow'))
+
+        self.canvas.tag_bind('facil', '<Enter>', lambda _: self.canvas.config(cursor='hand2'))
+        self.canvas.tag_bind('facil', '<Leave>', lambda _: self.canvas.config(cursor='arrow'))
+
+        self.canvas.tag_bind('medio', '<Enter>', lambda _: self.canvas.config(cursor='hand2'))
+        self.canvas.tag_bind('medio', '<Leave>', lambda _: self.canvas.config(cursor='arrow'))
+
+        self.canvas.tag_bind('dificil', '<Enter>', lambda _: self.canvas.config(cursor='hand2'))
+        self.canvas.tag_bind('dificil', '<Leave>', lambda _: self.canvas.config(cursor='arrow'))
+
 
 
     def iniciar_jogo(self, dificuldade=None):

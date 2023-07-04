@@ -76,7 +76,7 @@ class Jogo(tk.Canvas):
         self.create_image(*self.display_point(x, y), image=self.player_imgs[self.player.direcao][-1], tag='player', anchor='sw')
 
     def criar_objetos_dinamicos(self):
-        self.moeda.set_posicao((self.largura - 2, self.altura - 2))
+        self.moeda.set_posicao(self.map.get_moeda_pos())
         x, y = self.moeda.get_posicao()
         self.create_image(*self.display_point(x, y), image=self.moeda_imgs[self.moeda_state], tag='moeda', anchor='sw')
         self.atualizar_moeda()
@@ -116,6 +116,7 @@ class Jogo(tk.Canvas):
 
         posicao = (x, y)
         posicao_intermediaria = (x_intermediario, y_intermediario)
+        print(self.map.is_vazio(posicao))
 
         if self.map.is_vazio(posicao) and self.map.is_vazio(posicao_intermediaria):
             self.player.set_posicao(posicao)
