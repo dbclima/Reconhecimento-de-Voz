@@ -11,7 +11,7 @@ import sys
 import time
 
 class Buffer:
-    MAX_SIZE = 100  # Aproximadamente 2.5s para preencher
+    MAX_SIZE = 50  # Aproximadamente 2.5s para preencher
     def __init__(self, size=None):
         self.inicio = perf_counter()
         self.size = size or self.MAX_SIZE
@@ -57,7 +57,7 @@ class Buffer:
 class Microfone:
     FORMATO = pa.paFloat32
     CANAIS = 1
-    RATE = 44100
+    RATE = 32000
     CHUNK = 1024
     TREINO_SIZE = 50
     RUIDO_SIZE = 50
@@ -71,7 +71,9 @@ class Microfone:
         self.limiar = None
         self.lista_limiares = list()
 
-        self.treino_keys = ['Direita', 'Esquerda', 'Cima', 'Baixo']
+        self.treino_keys = ['Direita', 'Esquerda', 'Cima', 'Baixo'][::-1]
+        self.criar_buffers_treino()
+
         self.dict_treino: dict[str, Buffer] = {key: Buffer(self.TREINO_SIZE) for key in self.treino_keys}
         self.dict_treino_mfcc: dict[str, np.ndarray] = dict()
         
@@ -85,8 +87,15 @@ class Microfone:
         
         loop_thread_escuta = Thread(target=self._thread_escuta, daemon=True)
         loop_thread_escuta.start()
-
         self.detectar_ruido()
+        
+        self.adicionar_palavras(self.treino_keys)
+        self.calcular_dict_treino_mfccs()
+        self.calcular_limiar()
+
+        loop_thread_buffer = Thread(target=self._thread_preencher_buffer, daemon=True)
+        loop_thread_buffer.start()
+
 
     def _thread_escuta(self):
         while True:
@@ -102,13 +111,15 @@ class Microfone:
             if self.buffer_teste.full:
                 self.dtw_compare(self.buffer_teste)
 
+    def criar_buffers_treino(self):
+        self.dict_treino = {palavra: Buffer() for palavra in self.treino_keys}
+
     def preencher_buffer(self, buffer: Buffer):
         while not buffer.full:
             frame = self.fila_in.get()
             buffer.add(frame)
 
     def get_buffer(self):
-        print(self.buffer_teste.get_elementos().shape)
         return self.buffer_teste.get_elementos()
     
     def treino(self):
@@ -125,31 +136,33 @@ class Microfone:
         lista_limiares = list()
         for key, mfccs_treino in self.dict_treino_mfcc.items():
             D, wp = librosa.sequence.dtw(mfccs_treino, mfccs_ruido)
-            print(np.sum(D[wp[:, 0], wp[:, 1]]))
             lista_limiares.append(np.sum(D[wp[:, 0], wp[:, 1]]))
         
         self.limiar = np.mean(lista_limiares)
-        print(self.limiar)
         
-    def adicionar_palavra(self, palavra: str) -> None:
-        if not palavra:
+    def adicionar_palavras(self, palavras: list) -> None:
+        if not palavras:
             return None
-
-        buffer = Buffer(self.TREINO_SIZE)
-
+        
+        palavra = palavras.pop()
         print(f'Diga {palavra}')
-        buffer.clear()
+        buffer = self.dict_treino[palavra]
         self.preencher_buffer(buffer)
         buffer.calibrar(self.buffer_ruido)
-
-        print(buffer.get_elementos_vozeados())
         np.save(f'Teste/{palavra}', buffer.get_elementos_vozeados())
 
-        self.dict_treino[palavra] = buffer
+        self.adicionar_palavras(palavras)
 
-        self.dict_treino_mfcc[palavra] = librosa.feature.mfcc(y=buffer.get_elementos_vozeados().flatten(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
-        D, wp = librosa.sequence.dtw(self.dict_treino_mfcc[palavra], self.mfccs_ruido)
-        self.lista_limiares.append(np.sum(D[wp[:, 0], wp[:, 1]]))
+    def calcular_dict_treino_mfccs(self):
+        for palavra, buffer in self.dict_treino.items():
+            self.dict_treino_mfcc[palavra] = librosa.feature.mfcc(y=buffer.get_elementos_vozeados().flatten(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
+
+
+    def calcular_limiar(self):
+        mfccs_ruido = librosa.feature.mfcc(y=self.buffer_ruido.get_array_elementos(), n_mfcc=13, n_fft=512, fmin=0, fmax=None)
+        for palavra in self.dict_treino_mfcc.keys():
+            D, wp = librosa.sequence.dtw(self.dict_treino_mfcc[palavra], mfccs_ruido)
+            self.lista_limiares.append(np.sum(D[wp[:, 0], wp[:, 1]]))
 
 
     def dtw_compare(self, buffer: Buffer):
@@ -170,24 +183,14 @@ class Microfone:
         print('-x-x-x-x-x-x-x-Detectando Ruido-x-x-x-x-x-x-x-')
         self.preencher_buffer(self.buffer_ruido)
         print('-x-x-x-x-x-x-Fim Detecção de Ruido-x-x-x-x-x-x-')
-        self.mfccs_ruido = librosa.feature.mfcc(y=self.buffer_ruido.get_array_elementos(), n_mfcc=13, n_fft=512, fmin=0, fmax=None, htk=False)
 
     def get_comando(self):
         comandos = self.fila_saida.get()
         custo, comando = min(comandos)
         return comando
-    
-    def comecar_coleta_dados(self):
-        loop_thread_buffer = Thread(target=self._thread_preencher_buffer, daemon=True)
-        loop_thread_buffer.start()
 
 
 if __name__ == '__main__':
     mic = Microfone()
-
-    palavras = ['Direita', 'Esquerda', 'Cima', 'Baixo']
-    for palavra in palavras:
-        mic.adicionar_palavra(palavra)
-
     while True:
-        print(mic.fila_saida.get())
+        print(mic.get_comando())

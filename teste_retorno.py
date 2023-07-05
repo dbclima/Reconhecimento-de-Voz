@@ -5,7 +5,8 @@ import struct
 FORMATIN = pyaudio.paFloat32
 FORMATOUT = FORMATIN
 CHANNELS = 1
-RATE = 44100
+RATE = 32000
+
 CHUNK = 1024
 
 
@@ -26,6 +27,8 @@ while True:
     in_data = streamIn.read(CHUNK)
     # print(np.array(struct.unpack('<1024f', in_data)).shape)
     streamOut.write(in_data)
+
+    
 
 in_data = np.load(r'Teste\Baixo.npy').flatten()
 print(in_data, in_data.shape)
