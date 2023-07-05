@@ -3,13 +3,15 @@ from PIL import Image, ImageTk
 
 from pathlib import Path
 import random
+from threading import Thread
+import time
 
 from classes import Jogador, Mapa, Moeda, Microfone
 
 class Jogo(tk.Canvas):
     SCALE = 3
     TEMPO_ACOES = 700
-    def __init__(self, container, shape=None, player_pos=None):
+    def __init__(self, container, microfone,shape=None, player_pos=None):
         self.largura, self.altura = shape or (21, 15)
         super().__init__(container, width=self.largura * 16 * self.SCALE, height=self.altura * 16 * self.SCALE, background='black', highlightthickness=0)
 
@@ -22,7 +24,7 @@ class Jogo(tk.Canvas):
         self.player = Jogador(player_pos)
         self.player_state = 0
 
-        self.microfone = Microfone()
+        self.microfone: Microfone = microfone
 
         self.timer_pos = (self.largura - 2, 1)
         self.timer_state = 0
@@ -32,7 +34,8 @@ class Jogo(tk.Canvas):
         self.criar_objetos_dinamicos()
 
         self.bind_all('<Key>', self.comando_wrapper)
-        self.after(self.TEMPO_ACOES, self.carregar_comando_voz)
+        
+        Thread(target=self.carregar_comando_voz, daemon=True).start()
 
     def carregar_imagens(self):
         path_pedras = [Path(pedra) for pedra in Path('./assets/rock').iterdir()]
@@ -83,11 +86,20 @@ class Jogo(tk.Canvas):
 
     def carregar_comando_voz(self):
         comando = self.microfone.get_comando()
+
+        conversor = {
+            'Direita': 'Right',
+            'Esquerda': 'Left',
+            'Cima': 'Up',
+            'Baixo': 'Down'
+        }
+
         if comando != None:
             print('Último comando válido:', comando)
             self.unbind_all('<Key>')
-            self.comando(comando)
-        self.after(self.TEMPO_ACOES//2, self.carregar_comando_voz)
+            self.comando(conversor[comando])
+        time.sleep(1 // self.TEMPO_ACOES)
+        self.carregar_comando_voz()
 
     def comando_wrapper(self, event: tk.Event):
         self.unbind_all('<Key>')
@@ -193,7 +205,6 @@ class Jogo(tk.Canvas):
     def condicao_vitoria(self) -> bool:
         if self.player.get_posicao() == self.moeda.get_posicao():
             self.fim = True
-            self.microfone.desligar()
             return True
         return False
 
@@ -202,7 +213,9 @@ if __name__ == '__main__':
     app = tk.Tk()
     app.title('Processamento de Voz - 23.1')
 
-    jogo = Jogo(app, shape=(21, 13))
+    microfone = Microfone(['Direita', 'Esquerda', 'Cima', 'Baixo'][::-1])
+
+    jogo = Jogo(app, microfone, shape=(21, 13))
     jogo.pack(expand=True)
 
     app.mainloop()

@@ -3,11 +3,12 @@ from PIL import Image, ImageTk
 from pathlib import Path
 
 from jogo_interface import Jogo
+from classes import Microfone
 
 class TopLevelJogo(tk.Toplevel):
-    def __init__(self, container, dificuldade=None):
+    def __init__(self, container, dificuldade=None, mic=None):
         super().__init__(container)
-
+        self.resizable(False, False)
         self.dificuldade = dificuldade or 'Médio'
 
         dict_dificuldade = {
@@ -16,7 +17,7 @@ class TopLevelJogo(tk.Toplevel):
             'Difícil': (21, 13)
         }
 
-        self.jogo = Jogo(self, dict_dificuldade[self.dificuldade])
+        self.jogo = Jogo(self, mic, dict_dificuldade[self.dificuldade])
         self.jogo.pack()
     
 
@@ -29,6 +30,7 @@ class Menu(tk.Tk):
         super().__init__()
         self.geometry('320x512')
         self.title('Processamento de Voz - 23.1')
+        self.resizable(False, False)
 
         self.canvas = tk.Canvas(self, width=self.LARGURA, height=self.ALTURA, highlightthickness=0)
         self.carregar_imagens()
@@ -66,7 +68,7 @@ class Menu(tk.Tk):
         self.canvas.create_image((self.LARGURA * 0.16, self.ALTURA // 1.1), image=self.botao_dificil, tag='dificil', anchor='sw')
 
     def atribuir_funcionalidades(self) -> None:
-        self.canvas.tag_bind('treino', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Fácil'))
+        self.canvas.tag_bind('treino', '<ButtonPress-1>', lambda _: self.treinar_microfone())
         self.canvas.tag_bind('facil', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Fácil'))
         self.canvas.tag_bind('medio', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Médio'))
         self.canvas.tag_bind('dificil', '<ButtonPress-1>', lambda _: self.iniciar_jogo(dificuldade='Difícil'))
@@ -83,11 +85,12 @@ class Menu(tk.Tk):
         self.canvas.tag_bind('dificil', '<Enter>', lambda _: self.canvas.config(cursor='hand2'))
         self.canvas.tag_bind('dificil', '<Leave>', lambda _: self.canvas.config(cursor='arrow'))
 
-
+    def treinar_microfone(self):
+        self.microfone = Microfone(['Direita', 'Esquerda', 'Cima', 'Baixo'][::-1])
 
     def iniciar_jogo(self, dificuldade=None):
         self.dificuldade = dificuldade or 'Médio'
-        self.top = TopLevelJogo(self, dificuldade=self.dificuldade)
+        self.top = TopLevelJogo(self, dificuldade=self.dificuldade, mic=self.microfone)
     
 
 if __name__ == '__main__':

@@ -63,7 +63,7 @@ class Microfone:
     RUIDO_SIZE = 50
     CAPTURA_SIZE = 75
 
-    def __init__(self):
+    def __init__(self, palavras):
         self.fila_in = Queue()
         self.fila_saida = Queue()
         self.buffer_teste = Buffer(self.CAPTURA_SIZE)
@@ -71,7 +71,7 @@ class Microfone:
         self.limiar = None
         self.lista_limiares = list()
 
-        self.treino_keys = ['Direita', 'Esquerda', 'Cima', 'Baixo'][::-1]
+        self.treino_keys = palavras
         self.criar_buffers_treino()
 
         self.dict_treino: dict[str, Buffer] = {key: Buffer(self.TREINO_SIZE) for key in self.treino_keys}
@@ -149,7 +149,7 @@ class Microfone:
         buffer = self.dict_treino[palavra]
         self.preencher_buffer(buffer)
         buffer.calibrar(self.buffer_ruido)
-        np.save(f'Teste/{palavra}', buffer.get_elementos_vozeados())
+        # np.save(f'Teste/{palavra}', buffer.get_elementos_vozeados())
 
         self.adicionar_palavras(palavras)
 
@@ -185,7 +185,9 @@ class Microfone:
         print('-x-x-x-x-x-x-Fim Detecção de Ruido-x-x-x-x-x-x-')
 
     def get_comando(self):
+        print('Aguardando comando...')
         comandos = self.fila_saida.get()
+        print('Comando Encontrado')
         custo, comando = min(comandos)
         return comando
 
