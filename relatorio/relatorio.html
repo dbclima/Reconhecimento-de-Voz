@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>relatorio.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="processamento-de-voz-231">Processamento de Voz 23.1</h1>
+<p>Alunos:</p>
+<ul>
+<li>Andrés</li>
+<li>Diogo Lima</li>
+<li>Rebeca</li>
+</ul>
+<h2 id="sum%C3%A1rio">Sumário</h2>
+<ul>
+<li><a href="#ideia-inicial">Ideia Inicial</a></li>
+<li><a href="#constru%C3%A7%C3%A3o">Construção</a></li>
+<li><a href="#conclus%C3%A3o">Conclusão</a></li>
+</ul>
+<h2 id="ideia-inicial">Ideia Inicial</h2>
+<p>A proposta do trabalho era desenvolver qualquer sistema que se utilizasse de processamento de voz em seu funcionamento. A abordagem inicial é desenvolver um jogo que fosse simples e que tivesse como forma de interação comandos de voz em tempo real.</p>
+<h2 id="constru%C3%A7%C3%A3o">Construção</h2>
+<p>O software foi desenvolvido em <code>Python3</code> e pode ser dividido em quatro etapas, desenvolvidas respectivamente:</p>
+<ul>
+<li><a href="#jogabilidade">Jogabilidade</a></li>
+<li><a href="#interface">Interface</a></li>
+<li><a href="#labirinto">Labirinto</a></li>
+<li><a href="#microfone">Microfone</a></li>
+</ul>
+<h3 id="jogabilidade">Jogabilidade</h3>
+<p>Inicialmente, o Jogo foi pensado como um tabuleiro, onde o jogador poderia se movimentar pelos espaços vazios para todas as direções. Pensando nisso, foram desenvolvidas classes, <code>Mapa</code> e <code>Jogador</code>, que armazenam o estado de cada um dos espaços vazios e a posição do personagem nesse tabuleiro.</p>
+<p>Como representação gráfica inicial, o mapa foi representado como um array de $n \times m$, onde o jogador foi representado como a letra $j$, e podia se movimentar livremente pelo mapa utilizando os comandos especificados (&quot;direita&quot;, &quot;esquerda&quot;, &quot;cima&quot; e &quot;baixo&quot;)</p>
+<center>
+<p><img src="./assets/relatório/jogo_interface.png" alt="jogo_terminal"></p>
+</center>
+<p>Onde os espaços vazios são representados por $0$ e as paredes por $1$.</p>
+<h3 id="interface">Interface</h3>
+<p>Para possibilitar a visualização do jogo, foi desenvolvido no framework <code>tkinter</code> (nativo do <code>Python3</code>) a interface principal, onde o jogador, os espaços vazios e os obstáculos passariam a ter representações gráficas externas ao terminal.</p>
+<p>Foi utilizado o Software <code>Aseprite</code> para o desenvolvimento de cada um dos elementos, que pode ser encontrado na pasta <code>assets</code> desse projeto.</p>
+<center>
+<p><img src="./assets/player/player_2.png" alt="player_2"> <img src="./assets/player/player_3.png" alt="player_3"> <img src="./assets/player/player_4.png" alt="player_4"> <img src="./assets/player/player_5.png" alt="player_5"></p>
+<p><img src="./assets/grass/grass_1.png" alt="grass_1"> <img src="./assets/grass/grass_2.png" alt="grass_2"> <img src="./assets/grass/grass_3.png" alt="grass_3"> <img src="./assets/rock/rock_1.png" alt="rock_1"> <img src="./assets/rock/rock_2.png" alt="rock_2"> <img src="./assets/rock/rock_3.png" alt="rock_3"></p>
+<p><img src="./assets/coin/coin_1.png" alt="coin_1"> <img src="./assets/coin/coin_2.png" alt="coin_2"> <img src="./assets/coin/coin_3.png" alt="coin_3"> <img src="./assets/coin/coin_4.png" alt="coin_4"></p>
+</center>
+<p>Nesta etapa do desenvolvimento, os inputs de movimentação ainda ocorrem via teclado.</p>
+<h3 id="labirinto">Labirinto</h3>
+<p>Para adicionar um grau a mais de complexidade para o jogo, foi implementado um algoritmo capaz de gerar labirintos, <code>DFS</code> (Depth-First Search), onde ao iniciar o jogo e definir o tamanho do mapa... Um novo labirinto é gerado randomicamente, fazendo cada jogo único.</p>
+<p>O algoritmo teve de ser modificado em uma série de aspectos, uma vez que o mesmo é focado em desenvolver labirintos onde as paredes são unidimensionais. Porém, uma vez estabelhecida a temática de tabuleiro, os obstáculos devem ocupar uma casa inteira, e não apenas uma aresta de uma casa, como observado abaixo.</p>
+<center>
+<p><img src="./assets/relatório/labirinto.png" alt="labirinto"></p>
+</center>
+<h3 id="microfone">Microfone</h3>
+<p>Agora que as funcionalidades do jogo já foram estabelhecidas, a próxima etapa seria coletar dados do microfone em tempo real.</p>
+<p>Para isso, foi implementada inicialmente a biblioteca de <code>speech_recognition</code>, que utiliza api's online para detecção de frases. Porém, existem alguns aspectos negativos dessa biblioteca. Primeiramente, o software passaria a ser 100% dependente de internet, além disso, a biblioteca tem um tempo de resposta muito alto, uma vez que ela apenas verifica o que está sendo dito nos intervalos de silêncio, portanto, não realiza nenhuma detecção se a fala for contínua.</p>
+<p>Pensando nisso, evoluimos o software para comportar reconhecimentos offline e de espaços de aproximadamente 1 segundo com o <code>DTW</code>. Dessa forma, mesmo no meio da fala, quando uma palavra-chave é dita, a resposta é quase imediata. A implementação foi feita coletando o audio do microfone em blocos, utilizando as bibliotecas <code>pyaudio</code> e <code>librosa</code>, onde extraimos os coeficientes mel-cepstrais e os comparamos com as das amostras de treino coletar os comandos vocais.</p>
+<h2 id="conclus%C3%A3o">Conclusão</h2>
+<p>Por fim, foi desenvolvido um Menu, onde o jogador pode treinar os comandos com a sua voz e escolher a dificuldade de seu jogo (Fácil, Médio ou Difícil).</p>
+<center>
+<p><img src="./assets/relatório/menu.png" alt="menu"></p>
+</center>
+<p>Após o treino, o Jogador pode selecionar qualquer um dos escudos e iniciar o jogo com um labirinto diferente todas as vezes.</p>
+
+</body>
+</html>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ tex2jax: {inlineMath: [['$', '$']]}, messageStyle: "none" });</script>

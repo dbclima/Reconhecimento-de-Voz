@@ -128,7 +128,6 @@ class Jogo(tk.Canvas):
 
         posicao = (x, y)
         posicao_intermediaria = (x_intermediario, y_intermediario)
-        print(self.map.is_vazio(posicao))
 
         if self.map.is_vazio(posicao) and self.map.is_vazio(posicao_intermediaria):
             self.player.set_posicao(posicao)
@@ -215,7 +214,7 @@ if __name__ == '__main__':
 
     microfone = Microfone(['Direita', 'Esquerda', 'Cima', 'Baixo'][::-1])
 
-    jogo = Jogo(app, microfone, shape=(21, 13))
+    jogo = Jogo(app, microfone, shape=(11, 11))
     jogo.pack(expand=True)
 
     app.mainloop()

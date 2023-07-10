@@ -114,7 +114,7 @@ class Jogo:
         return retorno
 
 if __name__ == '__main__':
-    mapa_teste = Jogo((20, 20), (1, 1))
+    mapa_teste = Jogo((10, 10), (1, 1))
     print(mapa_teste)
     # teste = np.zeros((5, 10))
     # teste[1, 2] = 1
