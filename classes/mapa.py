@@ -26,8 +26,4 @@ class Mapa:
         
     def get_moeda_pos(self):
         return self.moeda_pos[0] * 2 + 1, self.moeda_pos[1] * 2 + 1
-        
-
-
-
         return True
