@@ -63,13 +63,15 @@ class Microfone:
     RUIDO_SIZE = 50
     CAPTURA_SIZE = 75
 
-    def __init__(self, palavras):
+    def __init__(self, palavras, input_device_index=0):
         self.fila_in = Queue()
         self.fila_saida = Queue()
         self.buffer_teste = Buffer(self.CAPTURA_SIZE)
         self.buffer_ruido = Buffer(self.RUIDO_SIZE)
         self.limiar = None
         self.lista_limiares = list()
+
+        self.input_device_index = input_device_index
 
         self.treino_keys = palavras
         self.criar_buffers_treino()
@@ -82,7 +84,7 @@ class Microfone:
                                       channels=self.CANAIS,
                                       rate=self.RATE,
                                       input=True,
-                                      input_device_index=0,
+                                      input_device_index=self.input_device_index,
                                       frames_per_buffer=self.CHUNK)
         
         loop_thread_escuta = Thread(target=self._thread_escuta, daemon=True)

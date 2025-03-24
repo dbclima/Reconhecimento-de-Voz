@@ -6,7 +6,7 @@ import random
 from threading import Thread
 import time
 
-from classes import Jogador, Mapa, Moeda, Microfone
+from .classes import Jogador, Mapa, Moeda, Microfone
 
 class Jogo(tk.Canvas):
     SCALE = 3

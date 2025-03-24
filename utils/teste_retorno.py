@@ -2,6 +2,8 @@ import pyaudio
 import numpy as np
 import struct
 
+IDX_INPUT = 2
+
 FORMATIN = pyaudio.paFloat32
 FORMATOUT = FORMATIN
 CHANNELS = 1
@@ -14,7 +16,7 @@ audio = pyaudio.PyAudio()
 
 # start Recording
 streamIn = audio.open(format=FORMATIN, channels=CHANNELS,
-                      rate=RATE, input=True, input_device_index=1,
+                      rate=RATE, input=True, input_device_index=IDX_INPUT,
                       frames_per_buffer=CHUNK)
 streamOut = audio.open(format=FORMATOUT, channels=CHANNELS,
                        rate=RATE, output=True, input_device_index=0,

@@ -9,6 +9,7 @@ def gravar(tempo: int, arquivo: str):
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 44100
+    INPUT_DEVICE_INDEX = 2
 
     p = pyaudio.PyAudio()
 
@@ -16,7 +17,8 @@ def gravar(tempo: int, arquivo: str):
                     channels=CHANNELS,
                     rate=RATE,
                     input=True,
-                    frames_per_buffer=CHUNK)
+                    frames_per_buffer=CHUNK,
+                    input_device_index=INPUT_DEVICE_INDEX)
 
     print('Inicio Gravação')
 

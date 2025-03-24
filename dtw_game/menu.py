@@ -2,8 +2,8 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from pathlib import Path
 
-from jogo_interface import Jogo
-from classes import Microfone
+from .jogo_interface import Jogo
+from .classes import Microfone
 
 class TopLevelJogo(tk.Toplevel):
     def __init__(self, container, dificuldade=None, mic=None):
@@ -26,17 +26,19 @@ class Menu(tk.Tk):
     LARGURA = 320
     ALTURA = 512
 
-    def __init__(self):
+    def __init__(self, input_device_index=0):
         super().__init__()
         self.geometry('320x512')
         self.title('Processamento de Voz - 23.1')
         self.resizable(False, False)
 
+        self.input_device_index = input_device_index
+
         self.canvas = tk.Canvas(self, width=self.LARGURA, height=self.ALTURA, highlightthickness=0)
         self.carregar_imagens()
         self.criar_objetos()
         self.atribuir_funcionalidades()
-        
+
         self.canvas.pack()
 
     def carregar_imagens(self) -> None:
@@ -86,7 +88,7 @@ class Menu(tk.Tk):
         self.canvas.tag_bind('dificil', '<Leave>', lambda _: self.canvas.config(cursor='arrow'))
 
     def treinar_microfone(self):
-        self.microfone = Microfone(['Direita', 'Esquerda', 'Cima', 'Baixo'][::-1])
+        self.microfone = Microfone(['Direita', 'Esquerda', 'Cima', 'Baixo'][::-1], input_device_index=self.input_device_index)
 
     def iniciar_jogo(self, dificuldade=None):
         self.dificuldade = dificuldade or 'Médio'
