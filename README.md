@@ -3,9 +3,33 @@
 Link para o projeto no `github`: [projeto](https://github.com/dev-diogo-lima/Reconhecimento-de-Voz)
 
 ## Sumário
+- [Instalação](#instalação)
 - [Ideia Inicial](#ideia-inicial)
 - [Construção](#construção)
 - [Conclusão](#conclusão)
+
+## Instalação
+Para testar o jogo basta clonar este repositório em seu computador com python instalado.
+
+### Instalação de Bibliotecas
+**Opcionalmente** pode-se criar um ambiente virtual para proteger as versões de bibliotecas da sua distribuição de python com:
+~~~bash
+python -m venv venv
+./venv/Scripts/activate
+~~~
+
+Em seguida basta utilizar o comando (obrigatório)
+~~~bash
+pip install -r requirements.txt
+~~~
+
+### Iniciando o Jogo
+Para inicializar o jogo basta digitar o seguinte comando no diretório principal do projeto:
+~~~bash
+python -m dtw_game
+~~~
+
+Caso não inicie, se certifique de que está no mesmo diretório onde encontra-se a pasta `dtw_game` e este `README.md`.
 
 ## Ideia Inicial
 A proposta do trabalho era desenvolver qualquer sistema que se utilizasse de processamento de voz em seu funcionamento. A abordagem inicial é desenvolver um jogo que fosse simples e que tivesse como forma de interação comandos de voz em tempo real.
