@@ -3,3 +3,5 @@ output/*.wav
 
 # Ignorar Ambiente virtual
 venv
+
+**/__pycache__
